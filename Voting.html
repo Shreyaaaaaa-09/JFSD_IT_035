@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Voting</title>
+    <style>
+        body {
+            background-color: #f1f1f1;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            width: 70%;
+
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .container h1 {
+            text-align: center;
+        }
+
+        .container form {
+            margin-top: 20px;;
+        }
+
+        .container form input[type="text"],
+        .container form input[type="number"] {
+            width: 95%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .container form input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        .container form label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .container form label:last-child {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>     
+<body>
+    <div class="container">
+        <h1>Voting Eligibility</h1>
+        <form >
+            <centre><label for ="name" >Name:</label>
+            <input type="text" name="name" id="name" required>
+            <label for="age">Age:</label>
+            <input type="number" name="age" id="age" required>
+            <label for="nationality">Nationality</label>
+            <input type="text" name="nationality" id="nationality" required>
+            <br>
+            <br>
+            <button type="button" onclick="checkEligibility()">Check Eligibility</button>
+            <p id="result"></p>
+        </form>
+    </div>
+    <script>
+        function checkEligibility() {
+            var name = document.getElementById("name").value;
+            var age = document.getElementById("age").value; 
+            var nationality = document.getElementById("nationality").value.toLowerCase();
+
+            let result = document.getElementById("result");
+            if(name == "" ||age == "" ||nationality == "") {
+                result.innerHTML = "Please fill all the fields.";
+                return;
+            }
+            if(age < 18 && nationality != "indian") {
+               alert("You are not eligible to vote");}
+               else{
+                   alert("You are eligible to vote");
+               }
+        }
+    </script>
+</body>
+</html>

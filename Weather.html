@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Weather App</title>
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background: linear-gradient(to right, #4facfe, #00f2fe);
+    transition: background 0.5s ease-in-out;
+}
+
+.weather-container {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 20px;
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+input, button {
+    padding: 10px;
+    margin: 5px;
+    border: none;
+    border-radius: 5px;
+}
+
+button {
+    cursor: pointer;
+    background-color: #007BFF;
+    color: white;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+    </style>
+    <script>
+        const apiKey = '632e4079f82f53a3bf3415c116eab42b' ;
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+    document.querySelector("button[onclick='getWeather()']").addEventListener("click", getWeather);
+    document.querySelector("button[onclick='getUserLocation()']").addEventListener("click", getUserLocation);
+});
+
+function getWeather() {
+    const city = document.getElementById('cityInput').value;
+    if (!city) {
+        alert("Please enter a city");
+        return;
+    }
+    
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+    fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("City not found");
+            }
+            return response.json();
+        })
+        .then(data => updateWeather(data))
+        .catch(error => {
+            console.error('Error fetching weather:', error);
+            document.getElementById('weatherInfo').innerHTML = "<p>Error fetching weather data. Please try again.</p>";
+        });
+}
+
+function getUserLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(position => {
+            const { latitude, longitude } = position.coords;
+            fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Location data not available");
+                    }
+                    return response.json();
+                })
+                .then(data => updateWeather(data))
+                .catch(error => {
+                    console.error('Error fetching weather:', error);
+                    document.getElementById('weatherInfo').innerHTML = "<p>Error fetching weather data. Please try again.</p>";
+                });
+        }, () => {
+            alert("Unable to retrieve location.");
+        });
+    } else {
+        alert("Geolocation is not supported by this browser.");
+    }
+}
+
+function updateWeather(data) {
+    const weatherInfo = document.getElementById('weatherInfo');
+    if (!data || !data.main || !data.weather) {
+        weatherInfo.innerHTML = "<p>Weather data unavailable</p>";
+        return;
+    }
+    
+    const temperature = data.main.temp;
+    const description = data.weather[0].main.toLowerCase();
+    
+    weatherInfo.innerHTML = `<h2>${data.name}</h2><p>${temperature}°C, ${description}</p>`;
+    
+    updateBackground(description);
+}
+
+function updateBackground(weather) {
+    const body = document.body;
+    
+    if (weather.includes('clear')) {
+        body.style.background = "linear-gradient(to right, #ff7e5f, #feb47b)";
+    } else if (weather.includes('cloud')) {
+        body.style.background = "linear-gradient(to right, #bdc3c7, #2c3e50)";
+    } else if (weather.includes('rain')) {
+        body.style.background = "linear-gradient(to right, #00c6ff, #0072ff)";
+    } else if (weather.includes('snow')) {
+        body.style.background = "linear-gradient(to right, #d7d2cc, #304352)";
+    } else {
+        body.style.background = "linear-gradient(to right, #4facfe, #00f2fe)";
+    }
+}
+    </script>
+</head>
+<body>
+    <div class="weather-container">
+        <input type="text" id="cityInput" placeholder="Enter city">
+        <button onclick="getWeather()">Get Weather</button>
+        <button onclick="getUserLocation()">Use My Location</button>
+        <div id="weatherInfo"></div>
+    </div>
+</body>
+</html>

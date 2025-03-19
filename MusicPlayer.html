@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Player</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        
+        body {
+            background: #121212;
+            color: white;
+            text-align: center;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        header {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1c1c1c;
+            border-bottom: 2px solid #333;
+        }
+
+        input {
+            padding: 10px;
+            width: 60%;
+            border-radius: 20px;
+            border: none;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .music-list {
+            margin: 20px 0;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        li {
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            border-bottom: 1px solid #333;
+            transition: 0.3s;
+        }
+
+        li:hover {
+            background: #222;
+        }
+
+        .player {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: #000;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .player img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+        }
+
+        .song-info {
+            flex-grow: 1;
+            text-align: left;
+            margin-left: 10px;
+        }
+
+        .controls button {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h2>Music App</h2>
+            <input type="text" id="search" placeholder="Search for songs...">
+        </header>
+
+        <div class="music-list">
+            <ul id="songs-list"></ul>
+        </div>
+    </div>
+
+    <div class="player">
+        <img id="cover" src="https://via.placeholder.com/50" alt="Cover">
+        <div class="song-info">
+            <h4 id="song-title">Select a song</h4>
+            <p id="artist">Artist</p>
+        </div>
+        <audio id="audio"></audio>
+        <div class="controls">
+            <button id="prev">⏮</button>
+            <button id="play">▶</button>
+            <button id="next">⏭</button>
+        </div>
+    </div>
+
+    <script>
+        const songs = [
+            { title: "Blinding Lights", artist: "The Weeknd", src: "https://archive.org/details/the-weeknd-blinding-lights-official-audio_202103", cover: "assets/covers/blinding_lights.jpg" },
+            { title: "Shape of You", artist: "Ed Sheeran", src: "assets/songs/shape_of_you.mp3", cover: "assets/covers/shape_of_you.jpg" },
+            { title: "Someone Like You", artist: "Adele", src: "assets/songs/someone_like_you.mp3", cover: "assets/covers/someone_like_you.jpg" },
+            { title: "Stay", artist: "Justin Bieber & Kid Laroi", src: "assets/songs/stay.mp3", cover: "assets/covers/stay.jpg" },
+            { title: "Levitating", artist: "Dua Lipa", src: "assets/songs/levitating.mp3", cover: "assets/covers/levitating.jpg" }
+        ];
+
+        let currentSongIndex = 0;
+        const audio = document.getElementById("audio");
+        const title = document.getElementById("song-title");
+        const artist = document.getElementById("artist");
+        const cover = document.getElementById("cover");
+        const playButton = document.getElementById("play");
+        const prevButton = document.getElementById("prev");
+        const nextButton = document.getElementById("next");
+        const songList = document.getElementById("songs-list");
+
+        function loadSong(index) {
+            let song = songs[index];
+            title.innerText = song.title;
+            artist.innerText = song.artist;
+            audio.src = song.src;
+            cover.src = song.cover;
+        }
+
+        function playSong() {
+            audio.play();
+            playButton.innerText = "⏸";
+        }
+
+        function pauseSong() {
+            audio.pause();
+            playButton.innerText = "▶";
+        }
+
+        playButton.addEventListener("click", () => {
+            if (audio.paused) {
+                playSong();
+            } else {
+                pauseSong();
+            }
+        });
+
+        nextButton.addEventListener("click", () => {
+            currentSongIndex = (currentSongIndex + 1) % songs.length;
+            loadSong(currentSongIndex);
+            playSong();
+        });
+
+        prevButton.addEventListener("click", () => {
+            currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+            loadSong(currentSongIndex);
+            playSong();
+        });
+
+        songs.forEach((song, index) => {
+            let li = document.createElement("li");
+            li.innerHTML = `<span>${song.title} - ${song.artist}</span>`;
+            li.addEventListener("click", () => {
+                currentSongIndex = index;
+                loadSong(currentSongIndex);
+                playSong();
+            });
+            songList.appendChild(li);
+        });
+
+        loadSong(currentSongIndex);
+    </script>
+</body>
+</html>
